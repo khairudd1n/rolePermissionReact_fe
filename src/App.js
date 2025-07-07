@@ -1,25 +1,60 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { useState, useEffect } from 'react';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import Login from './components/Login';
+import Register from './components/Register';
+import Dashboard from './components/Dashboard';
+import RolesPage from './components/RolesPage';
+
 
 function App() {
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    // Check if user is already logged in
+    const storedUser = localStorage.getItem('user');
+    if (storedUser) {
+      setUser(JSON.parse(storedUser));
+    }
+    setLoading(false);
+  }, []);
+
+  const handleLogin = (userData) => {
+    setUser(userData);
+    localStorage.setItem('user', JSON.stringify(userData));
+  };
+
+  const handleLogout = () => {
+    setUser(null);
+    localStorage.removeItem('user');
+  };
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Router>
+      <Routes>
+        <Route
+          path="/"
+          element={user ? <Navigate to="/dashboard" /> : <Login onLogin={handleLogin} />}
+        />
+        <Route
+          path="/register"
+          element={<Register onRegister={handleLogin} />}
+        />
+        <Route
+          path="/dashboard"
+          element={user ? <Dashboard user={user} onLogout={handleLogout} /> : <Navigate to="/" />}
+        />
+        <Route
+        path="/settings/roles"
+        element={user ? <RolesPage /> : <Navigate to="/" />}
+        />
+      </Routes>
+    </Router>
   );
 }
 
 export default App;
+
