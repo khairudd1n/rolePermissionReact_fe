@@ -62,6 +62,12 @@ const RolesPage = () => {
     setSelectedRoleName('');
   };
 
+  const closeModal = () => {
+    setSelectedRoleId(null);
+    setSelectedRoleName('');
+    setAssignedMenus([]);
+  };
+
 return (
     <div className="main-content">
       <h2>Role Management</h2>
@@ -129,6 +135,7 @@ return (
             ))}
           </ul>
           <button onClick={savePermission}>Save</button>
+          <button onClick={closeModal}>Close</button>
         </div>
       )}
     </div>
